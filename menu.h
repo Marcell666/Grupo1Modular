@@ -19,6 +19,7 @@
 *
 *  $HA Histórico de evolução:
 *     Versão  Autor    Data			Observações
+*     1.01    Bruce	07/10/2017	Reestruturação
 *     1.00    Bruce	06/10/2017	Revisão/finalização
 *     0.05    Bruce	05/10/2017	Modulo professor
 *     0.04    Matheus   04/10/2017  	Revisão menu
@@ -28,7 +29,7 @@
 *
 *  $ED Descrição do módulo
 *     Este módulo implementa o Menu do Sistema Acadêmico a ser desenvolvido.
-*     O meu é a chamada dos modulos por interface gráfica.
+*     O menu é a chamada dos modulos por interface.
 ***************************************************************************/
 
 /***********************************************************************
@@ -45,6 +46,7 @@
 
 void MEN_menuInicial();
 
+
 /***********************************************************************
 *
 *  $FC Função: MEN_menuAluno
@@ -54,7 +56,18 @@ void MEN_menuInicial();
 *
 ***********************************************************************/
 
-void MEN_menuAluno();
+void MEN_adicionaAluno();
+
+/***********************************************************************
+*
+*  $FC Função: MEN_menuAluno
+*
+*  $ED Descrição da função
+*		Mostra o menu Aluno.
+*
+***********************************************************************/
+
+void MEN_modificaAluno();
 
 /***********************************************************************
 *
@@ -97,21 +110,21 @@ int MEN_loginProfessor();
 /			 Parâmentros: Estruturas de ponteiros.
 ***********************************************************************/
 
-void MEN_menuProfessor();
+void MEN_adicionaProfessor();
 
 /***********************************************************************
 *
-*  $FC Função: MEN_menuPAdministrativo
+*  $FC Função: MEN_menuProfessor
 *
 *  $ED Descrição da função
-*		Mostra o menu Administrativo.
+*		Mostra o menu Professor.
 *
 ***********************************************************************/
 /*Assertivas: Retorno da função: não há retorno.
 /			 Parâmentros: Estruturas de ponteiros.
 ***********************************************************************/
 
-void MEN_menuPAdministrativo();
+void MEN_modificaProfessor();
 /***********************************************************************
 *
 *  $FC Função: MEN_loginAdministrativo

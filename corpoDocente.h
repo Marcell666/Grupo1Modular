@@ -40,7 +40,6 @@
 #ifndef CORPODOCENTE_H
 #define CORPODOCENTE_H
 
-
 /***********************************************************************
 *
 *  $TC Tipo de dados: PRF Condições de retorno
@@ -65,6 +64,12 @@ typedef enum{
 	CDO_CondRetFormatoInvalido 
 		/* Condicao de Retorno Formato Inválido, usada quando os parâmetros de uma certa função não estão de acordo com o que é esperado pelas funções auxiliares */ 
 } CDO_tpCondRet;
+
+
+//TODO Inserir comentario
+typedef CDO_tpCondRet (*CDO_alteraInt)(int);
+typedef CDO_tpCondRet (*CDO_alteraString)(char*);
+
 
 /***********************************************************************
 *
