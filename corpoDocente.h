@@ -42,7 +42,7 @@
 
 /***********************************************************************
 *
-*  $TC Tipo de dados: CDO Condições de retorno
+*  $TC Tipo de dados: PRF Condições de retorno
 *
 *
 *  $ED Descrição do tipo

@@ -156,7 +156,9 @@ CDO_tpCondRet CDO_mostraTodos(){
  *  ****/
 
 CDO_tpCondRet CDO_limpa(){
-	clear(doc->professores);
+	Professor *prof = NULL;
+	while(pop_back(doc->professores, (void**) &prof)==LIS_CondRetOK){
+		PRF_libera(&prof);
 	return CDO_CondRetOk;
 }/* Fim função: CDO Limpa Lista */
 
@@ -166,8 +168,9 @@ CDO_tpCondRet CDO_limpa(){
  *  ****/
 
 CDO_tpCondRet CDO_retira(){
-	void *nulo;
-	if(pop_cursor(doc->professores, &nulo) == LIS_CondRetListaVazia) return CDO_CondRetCorpoDocenteVazio;
+	Professor *prof = NULL;
+	if(pop_cursor(doc->professores, &prof) == LIS_CondRetListaVazia) return CDO_CondRetCorpoDocenteVazio;
+	PRF_libera(&prof);
 	return CDO_CondRetOk;
 }/* Fim função: CDO Retira da Lista */
 
@@ -177,6 +180,7 @@ CDO_tpCondRet CDO_retira(){
  *  ****/
 
 CDO_tpCondRet CDO_libera(){
+	CDO_limpa();
 	del(doc->professores);
 	return CDO_CondRetOk;
 }/* Fim função: CDO Libera */
