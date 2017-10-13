@@ -38,8 +38,9 @@
 
 #include "menu.h"
 #include "corpodiscente.h"
-#include "corpoDocente.h"
 #include "aluno.h"
+#include "corpoDocente.h"
+#include "gradeCurricular.h"
 
 
 /***** Declarações encapsuladas pelo módulo *****/
@@ -377,7 +378,7 @@ void MEN_modificaProfessor()
 				scanf("%d", &paramInt);
 				ret = funcInt[opcao](paramInt);
 			} else if (funcString[opcao]!= NULL){
-				scanf("%s", paramString);
+				scanf(" %s", paramString);
 				ret = funcString[opcao](paramString);
 			} else break;
 		}
@@ -390,6 +391,89 @@ void MEN_modificaProfessor()
 		CDO_mostraAtual();
 	}while(opcao);
 }
+
+
+
+
+void MEN_menuGradeCurricular()
+{
+	char nomeFunc[][20] ={"sair", "adicionar disciplina" , "mostrar a disciplina atual", "buscar outra disciplina", "mostrar todas as disciplinas", "inserir um Pre-Requisito", "remover todos os Pre-Requisitos", "Limpar a grade Curricular"};
+	int nItens = 8, i;
+	int creditos;
+	char nome[MEN_TAM_STRING], codigo[MEN_TAM_STRING], bibliografia[MEN_TAM_STRING], ementa[MEN_TAM_STRING];
+	GRC_tpCondRet ret;
+	int opcao;
+
+	printf("\nMenu Disciplina\n");
+	do{
+		for(i=0;i<nItens;i++)
+			printf("Digite %d: %s.\n", i, nomeFunc[i]);
+		scanf("%d", &opcao);
+
+		switch(opcao){
+			case 1:
+
+				printf("\nDigite o nome:\n");
+				scanf(" %s", nome);
+				printf("\nDigite o codigo:\n");
+				scanf(" %s", codigo);
+				printf("\nDigite o numero de creditos:\n");
+				scanf(" %s", creditos);
+				printf("\nDigite a bibliografia:\n");
+				scanf(" %s", bibliografia);
+				printf("\nDigite a ementa:\n");
+				scanf(" %s", ementa);
+				ret = GRC_cadastra(nome, codigo, creditos, bibliografia, ementa);
+				break;
+			case 2:
+				GRC_mostraAtual();
+				break;
+			case 3:
+				printf("Digite o código da disciplina que deseja buscar:\n");
+				scanf(" %s", codigo);
+				ret = GRC_buscaPorCodigo(codigo);
+				GRC_mostraAtual();
+				break;
+			case 4:
+				GRC_mostrarTodas();
+				break;
+			case 5:
+				printf("Digite o código da disciplina que deseja configurar como pre-requisito:\n");
+				scanf(" %s", codigo);
+				ret = GRC_inserePreRequisito(codigo);
+				break;
+			case 6:
+				GRC_removePreRequisitos();
+				break;
+			case 7:
+				GRC_limpa();
+				break;
+			default:
+				if(opcao)
+					printf("Opcao inválida!\n");
+				break;
+		}
+		if(ret == GRC_CondRetOk)
+			printf("Operacao realizada com sucesso!\n");
+		else if(ret == GRC_CondRetNaoHaMemoria)
+			printf("ERRO. Nao ha memoria suficiente.\n");
+		else if(ret == GRC_CondRetGradeCurricularVazia)
+			printf("Ainda nao existe nenhuma disciplina cadastrada.\n");
+		else if(ret == GRC_CondRetDisciplinaNaoEncontrada)
+			printf("A disciplina solicitada nao foi encontrada.\n");
+		else if(ret == GRC_CondRetIdJaCriado)
+			printf("ERRO.Ja existe uma Disciplina com este codigo.\n");
+		else if(ret == GRC_CondRetFormatoInvalido)
+			printf("ERRO. Formato de dados invalido.\n");
+		GRC_mostraAtual();
+	}while(opcao);
+}
+
+
+
+
+
+
 /***********************************************************************
 *
 *  $FC Função: MEN_loginAdministrativo

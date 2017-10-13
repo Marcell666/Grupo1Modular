@@ -17,14 +17,7 @@
 *
 *  $HA Histórico de evolução:
 *     Versão	Autor	Data		Observações
-*	1.10	RP	05/10/2017  Ajuste de comentários das alteras de chaves
-*   	1.0    BM/RP	05/10/2017 	Mais Revisão
-*       0.40   NP	05/10/2017   Documentação finalizada 
-*   	0.32   BM/RP	03/10/2017 	Revisão
-*    	0.31   NP	03/10/2017 	Documentação iniciada
-*       0.30   BM	02/10/2017	Protótipos adicionados 
-*       0.20   BM	02/10/2017	Funcoes modelo adicionadas 
-*       0.10   BM	01/10/2017	Inicio do desenvolvimento 
+*       0.10   BM	07/10/2017	Inicio do desenvolvimento 
 *
 *  $ED Descrição do módulo
 *	  Este módulo implementa um conjunto de funções para criar e manipular uma lista de Instâncias de Professor, ou seja, um Corpo Docente.
@@ -51,7 +44,7 @@
 ***********************************************************************/
 
 typedef enum{
-	CRG_CondRetOk,
+	GRC_CondRetOk,
 		/* Condicao de Retorno OK, usada quando a função executa corretamente */
 	GRC_CondRetNaoHaMemoria,
 		/* Condicao de Retorno Nao Ha Memoria, usada quando a memoria do sistema nao apresenta mais espaco */ 
@@ -181,7 +174,7 @@ GRC_tpCondRet GRC_mostraAtual();
 *
 ***********************************************************************/
 
-GRC_tpCondRet GRC_mostraTodos();
+GRC_tpCondRet GRC_mostraTodas();
 
 /***********************************************************************
 *
@@ -273,7 +266,13 @@ GRC_tpCondRet GRC_libera();
 *
 ***********************************************************************/
 
-GRC_tpCondRet GRC_buscaPorCodigo(int chave);
+GRC_tpCondRet GRC_buscaPorCodigo(char *chave);
+
+/* insere na discplina atual uma disciplina com codigo correspondente como pre-requisito */
+GRC_tpCondRet GRC_inserePreRequisito(char *codigoPre);
+/* remove TODOS os prerequisitos*/
+GRC_tpCondRet GRC_removePreRequisitos();
+
 
 /***********************************************************************
 *
@@ -406,141 +405,6 @@ GRC_tpCondRet GRC_consultaBibiliografia(char *bibiliografia);
 ***********************************************************************/
 
 GRC_tpCondRet GRC_consultaEmenta(char *ementa);
-
-/***********************************************************************
-*
-*  $FC Função: GRC Altera Nome
-*
-*  $ED Descrição da função
-*     Altera o nome da instância de Professor selecionada naquele momento
-*
-*  $EP Parâmetros     
-*     $P nome - Cadeia de caracteres que substituirá o nome do professor selecionado
-*						
-*  $FV Valor retornado
-*     GRC_CondRetOk 
-*	  GRC_CondRetFormatoInvalido - Caso o formato do nome não esteja de acordo com o esperado pela função PRF_alteraNome
-*     GRC_CondRetCorpoDocenteVazio - Caso o Corpo Docente apontado esteja vazio
-*
-*  Assertiva de Entrada: 
-*		-Corpo docente foi alocado
-*		-O ponteiro para a cadeia de caracteres nome é válida
-*                    
-*  Assertiva de Saída: 
-*	    -É necessário que a Função PRF_alteraNome tenha suas assertivas de entrada e saida corretamente implementadas
-*       -Caso isso ocorra o nome dessa da instância de Professor selecionada será alterada para o conteúdo do parâmetro
-*
-***********************************************************************/
-
-GRC_tpCondRet GRC_alteraNome(char *nome);
-
-/***********************************************************************
-*
-*  $FC Função: GRC Altera RG
-*
-*  $ED Descrição da função
-*     Altera o rg da instância de Professor selecionada naquele momento
-*
-*  $EP Parâmetros     
-*     $P rg - Inteiro que substituirá o rg do professor selecionado
-*						
-*  $FV Valor retornado
-*     GRC_CondRetOk 
-*	  GRC_CondRetFormatoInvalido - Caso o formato do rg não esteja de acordo com o esperado pela função PRF_alteraRg
-*     GRC_CondRetCorpoDocenteVazio - Caso o Corpo Docente apontado esteja vazio
-*     GRC_CondRetIdJaCriado - Já existe professor na lista com esse RG
-*
-*  Assertiva de Entrada: 
-*		-Corpo docente foi alocado
-*                    
-*  Assertiva de Saída: 
-*	    -É necessário que a Função PRF_alteraRg tenha suas assertivas de entrada e saida corretamente implementadas
-*       -Caso isso ocorra o rg dessa da instância de Professor selecionada será alterada para o conteúdo do parâmetro
-*
-***********************************************************************/
-
-GRC_tpCondRet GRC_alteraCodigo(char *codigo);
-
-/***********************************************************************
-*
-*  $FC Função: GRC Altera CPF
-*
-*  $ED Descrição da função
-*     Altera o CPF da instância de Professor selecionada naquele momento
-*
-*  $EP Parâmetros     
-*     $P cpf - Cadeia de caracteres que substituirá o cpf do professor selecionado
-*						
-*  $FV Valor retornado
-*     GRC_CondRetOk 
-*	  GRC_CondRetFormatoInvalido - Caso o formato do cpf não esteja de acordo com o esperado pela função PRF_alteraCpf
-*     GRC_CondRetCorpoDocenteVazio - Caso o Corpo Docente apontado esteja vazio
-*     GRC_CondRetIdJaCriado - Já existe professor na lista com esse CPF
-*
-*  Assertiva de Entrada: 
-*		-Corpo docente foi alocado
-*                    
-*  Assertiva de Saída: 
-*	    -É necessário que a Função PRF_alteraCpf tenha suas assertivas de entrada e saida corretamente implementadas
-*       -Caso isso ocorra o cpf dessa da instância de Professor selecionada será alterada para o conteúdo do parâmetro
-*
-***********************************************************************/
-
-GRC_tpCondRet GRC_alteraCreditos(int creditos);
-
-/***********************************************************************
-*
-*  $FC Função: GRC Altera RG
-*
-*  $ED Descrição da função
-*     Altera a matricula da instância de Professor selecionada naquele momento
-*
-*  $EP Parâmetros     
-*     $P matricula - Inteiro que substituirá a matricula do professor selecionado
-*						
-*  $FV Valor retornado
-*     GRC_CondRetOk 
-*	  GRC_CondRetFormatoInvalido - Caso o formato da matricula não esteja de acordo com o esperado pela função PRF_alteraMatricula
-*     GRC_CondRetCorpoDocenteVazio - Caso o Corpo Docente apontado esteja vazio
-*     GRC_CondRetIdJaCriado - Já existe professor na lista com esse Matricula
-*
-*  Assertiva de Entrada: 
-*		-Corpo docente foi alocado
-*                    
-*  Assertiva de Saída: 
-*	    -É necessário que a Função PRF_alteraMatricula tenha suas assertivas de entrada e saida corretamente implementadas
-*       -Caso isso ocorra o matricula dessa da instância de Professor selecionada será alterada para o conteúdo do parâmetro
-*
-***********************************************************************/
-
-GRC_tpCondRet GRC_alteraBibiliografia(char *bibiliografia);
-
-/***********************************************************************
-*
-*  $FC Função: GRC Altera Email
-*
-*  $ED Descrição da função
-*     Altera o email da instância de Professor selecionada naquele momento
-*
-*  $EP Parâmetros     
-*     $P email - Cadeia de caracteres que substituirá o email do professor selecionado
-*						
-*  $FV Valor retornado
-*     GRC_CondRetOk 
-*     GRC_CondRetFormatoInvalido - Caso o formato do email não esteja de acordo com o esperado pela função PRF_alteraEmail
-*     GRC_CondRetCorpoDocenteVazio - Caso o Corpo Docente apontado esteja vazio
-*     GRC_CondRetIdJaCriado - Já existe professor na lista com esse Email
-*
-*  Assertiva de Entrada: 
-*		-Corpo docente foi alocado
-*                    
-*  Assertiva de Saída: 
-*	    -É necessário que a Função PRF_alteraEmail tenha suas assertivas de entrada e saida corretamente implementadas
-*       -Caso isso ocorra o email dessa da instância de Professor selecionada será alterada para o conteúdo do parâmetro
-*
-***********************************************************************/
-
-GRC_tpCondRet GRC_alteraEmenta(char *ementa);
 
 #endif
 

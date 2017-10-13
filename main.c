@@ -39,6 +39,7 @@
 #include "aluno.h"
 #include "corpodiscente.h"
 #include "corpoDocente.h"
+#include "gradeCurricular.h"
 #include "menu.h"
 
 
@@ -65,11 +66,11 @@ void menuAluno()
 	do{
 		printf("\nMenu Aluno\n");
 		printf("\nDigite 0: sair\n");
-		//printf("\nDigite 1: ver disciplinas");
+		printf("\nDigite 1: ver grade curricular");
 		//printf("\nDigite 2: ver horarios");
 		//printf("\nDigite 3: ver nota");
 		//printf("\nDigite 4: ver historico");
-		printf("\nDigite 1: modificar dados pessoais");
+		printf("\nDigite 2: modificar dados pessoais");
 		//printf("\nDigite 6: cancelar disciplina");
 		//printf("\nDigite 7: trancar a faculdade");
 		scanf("%d", &opcao);
@@ -77,6 +78,10 @@ void menuAluno()
 		switch(opcao)
 		{
 			case 1:
+				system("cls");
+				GRC_mostraTodos();
+				break;
+			case 2:
 				system("cls");
 				MEN_modificaAluno();
 				break;
@@ -112,8 +117,7 @@ void menuProfessor()
 	do{
 		printf("\nMenu Professor\n");
 		printf("\nDigite 0: sair\n");
-		//printf("\nDigite X: ver disciplinas");
-		//printf("\nDigite X: ver horarios");
+		printf("\nDigite 1: ver grade curricular");
 		//printf("\nDigite X: ver nota");
 		//printf("\nDigite X: ver turmas");
 		printf("\nDigite 5: modificar dados pessoais");
@@ -123,7 +127,7 @@ void menuProfessor()
 		{	
 			case 1:
 				system("cls");
-				// Ir menu Aluno. Area onde o aluno realizar o menu
+				MEN_menuGradeCurricular();
 				break;
 			case 2:
 				system("cls");
@@ -179,7 +183,6 @@ void menuPAdministrativo()
 		printf("\nDigite 0: sair");
 		printf("\nDigite 1: ver corpo discente");
 		printf("\nDigite 2: ver corpo docente");
-		//printf("\nDigite 3: ver disciplina");
 		//printf("\nDigite 4: ver criterio de aprovacao");
 		printf("\nDigite 3: adicionar aluno");
 		printf("\nDigite 4: deletar aluno");
@@ -194,6 +197,7 @@ void menuPAdministrativo()
 		printf("\nDigite 8: modificar dados pessoais de um professor");
 		printf("\nDigite 9: limpa corpo discente");
 		printf("\nDigite 10: limpa corpo docente");
+		printf("\nDigite 11: ver grade curricular");
 		scanf("%d", &opcao);
 
 		switch(opcao)
@@ -247,6 +251,9 @@ void menuPAdministrativo()
 			case 10:
 				CDO_limpa();
 				break;
+			case 11:
+				MEN_menuGradeCurricular();
+				break;
 			default:
 				if(opcao)
 				{
@@ -264,6 +271,7 @@ int main(void){
 	int opcao = 0;
 	CDO_cria();
 	CDI_cria();
+	GRC_cria();
 	do{
 		printf("\nMenu SAU\n");
 		printf("\nDigite 0: para sair");
@@ -278,6 +286,7 @@ int main(void){
 				system("cls");
 				printf("\n\nFechando programa...\n\n");
 				CDO_libera();
+				GRC_libera();
 				exit(0);
 				break;
 			case 1:

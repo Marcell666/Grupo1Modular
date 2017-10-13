@@ -16,13 +16,7 @@
 *
 *  $HA Histórico de evolução:
 *     Versão  Autor 	Data     	Observações
-*       0.52   BM/RP	04/10/2017	Revisão
-*       0.51   BM   	04/10/2017	Revisão
-*       0.50   RP   	03/10/2017	Documentação
-	0.40   FA	03/10/2017	Funções busca adicionadas
-*       0.30   MR   	03/10/2017	Funções de consulta/altera adicionadas 
-*       0.20   BM   	02/10/2017	Funcoes modelo adicionadas 
-*       0.10   BM	01/10/2017	Inicio do desenvolvimento 
+*       0.10   BM	07/10/2017	Inicio do desenvolvimento 
 *
 *  $ED Descrição do módulo
 *     Este módulo contém as funções específicas para manipular os professores na lista de corpo docente.
@@ -33,6 +27,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "gradeCurricular.h"
 #include "disciplina.h"
 #include "listas.h"
 
@@ -49,7 +44,7 @@
 typedef struct parDisciplina{
 	Disciplina *disciplina;
 	List *preRequisitos;
-} ParDisciplinas;
+} ParDisciplina;
 
 typedef struct gradeCurricular{
 	List *parDisciplinas;
@@ -62,8 +57,7 @@ static GradeCurricular *grc;
 	/* instância de corpo docente armazenada por este módulo */
 
 /***** Protótipos das funções encapsuladas no módulo *****/
-// TODO retirar isto
-GRC_tpCondRet buscaIdentificacao(int rgChave, char *cpfChave, int matriculaChave, char *emailChave);
+// TODO retirar isto caso nao faça nenhuma funcao
 
 
 /*****  Código das funções exportadas pelo módulo  *****/
@@ -74,7 +68,7 @@ GRC_tpCondRet buscaIdentificacao(int rgChave, char *cpfChave, int matriculaChave
 *  ****/
 
 GRC_tpCondRet GRC_cria(){
-	grc = (GradeCurricular*) malloc(sizeof(CorpoDocente));
+	grc = (GradeCurricular*) malloc(sizeof(GradeCurricular));
 	createList(&grc->parDisciplinas);
 	return GRC_CondRetOk;
 }/* Fim função: GRC Criar Lista de Corpo Docente */
@@ -85,51 +79,54 @@ GRC_tpCondRet GRC_cria(){
 *  ****/
 
 GRC_tpCondRet GRC_cadastra(char* nome, char* codigo, int creditos, char* bibliografia, char* ementa){
-	ParDisciplina *parD
-	DIS_ptDisciplina disc = NULL;
+	ParDisciplina *parD = NULL;
+	Disciplina *disc = NULL;
 	DIS_tpCondRet ret;
-	if(buscaCodigo(codigo) != GRC_CondRetOk)
+	if(GRC_buscaPorCodigo(codigo) == GRC_CondRetOk)
 		return GRC_CondRetIdJaCriado;
-	ret = DIS_gera_param(disc, nome, codigo, creditos, bibliografia, ementa);
-	if(ret == PRF_CondRetNaoHaMemoria) return GRC_CondRetNaoHaMemoria;
-	if(ret == PRF_CondRetFormatoInvalido) return GRC_CondRetFormatoInvalido;
+	ret = DIS_gera_param(&disc, nome, codigo, creditos, bibliografia, ementa);
+	if(ret == DIS_CondRetFaltouMemoria) return GRC_CondRetNaoHaMemoria;
+	if(ret == DIS_CondRetParametroInvalido) return GRC_CondRetFormatoInvalido;
 	parD = (ParDisciplina*) malloc(sizeof(ParDisciplina));
 	parD->disciplina = disc;
 	createList(&parD->preRequisitos);
-	push_back(grc->parDisciplinas, (void**) parD);
+	push_back(grc->parDisciplinas, parD);
 	return GRC_CondRetOk;
 }/* Fim função: GRC Cadastrar Professor */
 
-/***********************************************************************
+/***************************************************************************
 *
-*  $FC Função: GRC Busca Identificacao
-*
-*  $FV Valor retornado
-*     Retorna GRC_CondRetIdJaCriado caso um professor com o mesmo valor de uma das chaves seja encontrado.
-*     Retorna PRF_CondRetOk caso contrário.
-*
-***********************************************************************/
-GRC_tpCondRet buscaIdentificacao(int rgChave, char *cpfChave, int matriculaChave, char *emailChave){
-	PRF_ptProfessor prof = NULL;
-	char cpf[PRF_TAM_STRING];
-	char email[PRF_TAM_STRING];
-	int matricula;
-	int rg;
-	first(grc->parDisciplinas);
+*  Função: GRC Mostra Pre-Requisitos
+*  ****/
+
+/* Funcao interna */
+
+GRC_tpCondRet GRC_mostraPreRequisitos(ParDisciplina *parD){
+	Disciplina *disc = NULL;
+	char buffer[80] = "";
+	char *codigo = NULL;
+	int tam=0;
+	first(parD->preRequisitos);
+	printf("Pre-Requisitos: ");
 	do{
-		if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetOk;
-
-		PRF_consultaCpf(prof, cpf);
-		PRF_consultaRg(prof, &rg);
-		PRF_consultaEmail(prof, email);
-		PRF_consultaMatricula(prof, &matricula);
-		if(strcmp(cpfChave, cpf)==0 || strcmp(emailChave, email)==0 || rgChave == rg || matriculaChave == matricula) return GRC_CondRetIdJaCriado;
-	}while(next(grc->parDisciplinas)==LIS_CondRetOK);
-
-	/* Não encontrou */
+		if(get_val_cursor(parD->preRequisitos, (void**) &disc)== LIS_CondRetListaVazia) break;
+		DIS_get_codigo(disc, &codigo);
+		printf(" %s", buffer);
+		strcpy(buffer, codigo);
+		strcat(buffer, ",");
+		free(codigo);
+	}while(next(parD->preRequisitos)==LIS_CondRetOK);
+	if(strcmp(buffer,"")==0)
+		printf("--//--");
+	else{
+		tam = strlen(buffer);
+		/* Tam não é igual a zero, pois se fosse, nao estariamos neste if */
+		buffer[tam-1] = '.';
+		printf("%s", buffer);
+	}
+	printf("\n");
 	return GRC_CondRetOk;
-}/* Fim função: GRC Busca Atual */
+}/* Fim função: GRC Mostra Pre-Requisitos */
 
 /***************************************************************************
 *
@@ -137,23 +134,25 @@ GRC_tpCondRet buscaIdentificacao(int rgChave, char *cpfChave, int matriculaChave
 *  ****/
 
 GRC_tpCondRet GRC_mostraAtual(){
-	ParDisciplina parD = NULL;
+	ParDisciplina *parD = NULL;
 	if(get_val_cursor(grc->parDisciplinas, (void**) &parD)== LIS_CondRetListaVazia) return GRC_CondRetGradeCurricularVazia;
 	DIS_exibe(parD->disciplina);
+	GRC_mostraPreRequisitos(parD);
 	return GRC_CondRetOk;
 }/* Fim função: GRC Mostra Atual */
 
  /***************************************************************************
  *
- *  Função: GRC Mosta Todos Professores
+ *  Função: GRC Mostra Todos Professores
  *  ****/
 
-GRC_tpCondRet GRC_mostraTodos(){
-	ParDisciplina parD = NULL;
+GRC_tpCondRet GRC_mostraTodas(){
+	ParDisciplina *parD = NULL;
 	first(grc->parDisciplinas);
 	do{
-		if(get_val_cursor(grc->parDisciplinas, (void**) &parD)== LIS_CondRetListaVazia) return GRC_CondRetGradeCurricularVazio;
+		if(get_val_cursor(grc->parDisciplinas, (void**) &parD)== LIS_CondRetListaVazia) return GRC_CondRetGradeCurricularVazia;
 		DIS_exibe(parD->disciplina);
+		GRC_mostraPreRequisitos(parD);
 	}while(next(grc->parDisciplinas)==LIS_CondRetOK);
 	return GRC_CondRetOk;
 }/* Fim função: GRC Mosta Todos Professores */
@@ -167,7 +166,7 @@ GRC_tpCondRet GRC_limpa(){
 	ParDisciplina *parD = NULL;
 	while(pop_back(grc->parDisciplinas, (void**) &parD)==LIS_CondRetOK){
 		DIS_deleta_Disciplina(&parD->disciplina);
-		del(&parD->preRequisitos);
+		del(parD->preRequisitos);
 		free(parD);	
 	};
 	return GRC_CondRetOk;
@@ -179,9 +178,10 @@ GRC_tpCondRet GRC_limpa(){
  *  ****/
 
 GRC_tpCondRet GRC_retira(){
-	if(pop_cursor(grc->parDisciplinas, &parD) == LIS_CondRetListaVazia) return GRC_CondRetGradeCurricularVazia;
+	ParDisciplina *parD = NULL;
+	if(pop_cursor(grc->parDisciplinas, (void**) &parD) == LIS_CondRetListaVazia) return GRC_CondRetGradeCurricularVazia;
 	DIS_deleta_Disciplina(&parD->disciplina);
-	del(&parD->preRequisitos);
+	del(parD->preRequisitos);
 	free(parD);
 	return GRC_CondRetOk;
 }/* Fim função: GRC Retira da Lista */
@@ -202,109 +202,85 @@ GRC_tpCondRet GRC_libera(){
  *  Função: GRC Busca Por RG
  *  ****/
 
-GRC_tpCondRet GRC_buscaPorRg(int chave){
-	PRF_ptProfessor prof = NULL;
-	int rg;
+GRC_tpCondRet GRC_buscaPorCodigo(char *chave){
+	ParDisciplina *parD = NULL;
+	char *codigo = NULL;
+	int ret;
 
 	first(grc->parDisciplinas);
 	do{
-		if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
+		if(get_val_cursor(grc->parDisciplinas, (void**) &parD) == LIS_CondRetListaVazia)
+			return GRC_CondRetGradeCurricularVazia;
 
-		PRF_consultaRg(prof, &rg);
-		if(chave == rg) 
+		DIS_get_codigo(parD->disciplina, &codigo);
+		ret = strcmp(chave, codigo);
+		free(codigo);
+		if(ret==0)
 			return GRC_CondRetOk;
 	}while(next(grc->parDisciplinas)==LIS_CondRetOK);
 
-	return GRC_CondRetProfessorNaoEncontrado;
+	return GRC_CondRetDisciplinaNaoEncontrada;
 }/* Fim função: GRC Busca Por RG */
 
  /***************************************************************************
  *
- *  Função: GRC Busca Por CPF
- *  ****/
-GRC_tpCondRet GRC_buscaPorCpf(char *chave){
-	PRF_ptProfessor prof = NULL;
-	char cpf[PRF_TAM_STRING];
-
-	first(grc->parDisciplinas);
-	do{
-		if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-
-		PRF_consultaCpf(prof, cpf);
-		if(strcmp(chave, cpf)==0)
-			return GRC_CondRetOk;
-	}while(next(grc->parDisciplinas)==LIS_CondRetOK);
-
-	return GRC_CondRetProfessorNaoEncontrado;
-}/* Fim função: GRC Busca Por CPF */
-
- /***************************************************************************
- *
- *  Função: GRC Busca Por Matricula
+ *  Função: GRC Busca Por RG
  *  ****/
 
-GRC_tpCondRet GRC_buscaPorMatricula(int chave){
-	PRF_ptProfessor prof = NULL;
-	int matricula;
-
-	first(grc->parDisciplinas);
-	do{
-		if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-
-		PRF_consultaMatricula(prof, &matricula);
-		if(chave == matricula) 
-			return GRC_CondRetOk;
-	}while(next(grc->parDisciplinas)==LIS_CondRetOK);
-
-	return GRC_CondRetProfessorNaoEncontrado;
-}/* Fim função: GRC Busca Por Matricula */
-
- /***************************************************************************
- *
- *  Função: GRC Busca Por Email
- *  ****/
-
-GRC_tpCondRet GRC_buscaPorEmail(char *chave){
-	PRF_ptProfessor prof = NULL;
-	char email[PRF_TAM_STRING];
-
-	first(grc->parDisciplinas);
-	do{
-		if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-
-		PRF_consultaEmail(prof, email);
-		if(strcmp(chave, email)==0)
-			return GRC_CondRetOk;
-	}while(next(grc->parDisciplinas)==LIS_CondRetOK);
-
-	return GRC_CondRetProfessorNaoEncontrado;
-}/* Fim função: GRC Busca Por Email */
-
- /***************************************************************************
- *
- *  Função: GRC Consulta Nome
- *  ****/
-GRC_tpCondRet GRC_consultaNome(char *nome){
-	PRF_ptProfessor prof = NULL;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	PRF_consultaNome(prof, nome);
+/*
+	TODO formalizar este comentário
+	Note que o codigo passado como argumento é o codigo do pre-requisito. E NÃO o código da disciplina a qual vamos adicionar um preRequisito.
+	A disciplina a qual vamos adicionar é a disciplina selecionada (cursor).
+*/
+GRC_tpCondRet GRC_inserePreRequisito(char *codigoPre){
+	ParDisciplina *parD = NULL;
+	ParDisciplina *parDPre = NULL;
+	char *codigo = NULL;
+	/* Recuperando disciplina atual da lista */
+	if(get_val_cursor(grc->parDisciplinas, (void**) &parD)== LIS_CondRetListaVazia) return GRC_CondRetGradeCurricularVazia;
+	/* Recuperando o código dela */
+	DIS_get_codigo(parD->disciplina, &codigo);	
+	/* Procurando o pre requisito */
+	if(GRC_buscaPorCodigo(codigoPre)!=GRC_CondRetOk){
+		/* Se não encontrei retorno o cursor para onde comecei e retorno */
+		GRC_buscaPorCodigo(codigo);
+		free(codigo);
+		return GRC_CondRetDisciplinaNaoEncontrada;
+	}
+	/* 
+		Recuperando a disciplina Pre-Requisito
+		Ja sei que a lista não esta vazia, não preciso verificar de novo
+	*/
+	get_val_cursor(grc->parDisciplinas, (void**) &parDPre);
+	/* Guardo o endereco do pre-requisito (disciplina, nao par) na lista do par (e nao disciplina) que recuperei no inicio */
+	push_back(parD->preRequisitos, parDPre->disciplina);
+	/* Retorno o cursor para onde comecei e retorno */
+	GRC_buscaPorCodigo(codigo);
+	free(codigo);
 	return GRC_CondRetOk;
-}/* Fim função: GRC Consulta Nome*/
+}/* Fim função: GRC Busca Por RG */
+
+GRC_tpCondRet GRC_removePreRequisitos(){
+	ParDisciplina *parD = NULL;
+	/* Recuperando disciplina da lista */
+	if(get_val_cursor(grc->parDisciplinas, (void**) &parD)== LIS_CondRetListaVazia) return GRC_CondRetGradeCurricularVazia;
+	clear(parD->preRequisitos);
+	return GRC_CondRetOk;
+}/* Fim função: GRC Busca Por RG */
+
 
  /***************************************************************************
  *
  *  Função: GRC Consulta RG
  *  ****/
-GRC_tpCondRet GRC_consultaRg(int *rg){
-	PRF_ptProfessor prof = NULL;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	PRF_consultaRg(prof,rg);
+GRC_tpCondRet GRC_consultaNome(char *nome){
+	ParDisciplina *parD = NULL;
+	char *nomeTemp = NULL;
+	/* Recuperando disciplina da lista */
+	if(get_val_cursor(grc->parDisciplinas, (void**) &parD)== LIS_CondRetListaVazia) return GRC_CondRetGradeCurricularVazia;
+	DIS_get_nome(parD->disciplina, &nomeTemp);
+	strcpy(nome, nomeTemp);
+	free(nomeTemp);
 	return GRC_CondRetOk;
 }/* Fim função: GRC Consulta RG */
 
@@ -312,11 +288,7 @@ GRC_tpCondRet GRC_consultaRg(int *rg){
  *
  *  Função: GRC Consulta CPF
  *  ****/
-GRC_tpCondRet GRC_consultaCpf(char *cpf){
-	PRF_ptProfessor prof = NULL;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	PRF_consultaCpf(prof, cpf);
+GRC_tpCondRet GRC_consultaCodigo(char *cpf){
 	return GRC_CondRetOk;
 }/* Fim função: GRC Consulta CPF*/
 
@@ -324,11 +296,7 @@ GRC_tpCondRet GRC_consultaCpf(char *cpf){
  *
  *  Função: GRC Consulta Matricula
  *  ****/
-GRC_tpCondRet GRC_consultaMatricula(int *matricula){
-	PRF_ptProfessor prof = NULL;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	PRF_consultaMatricula(prof,matricula);
+GRC_tpCondRet GRC_consultaCreditos(int *creditos){
 	return GRC_CondRetOk;
 }/* Fim função: GRC Consulta Matricula*/
 
@@ -336,176 +304,16 @@ GRC_tpCondRet GRC_consultaMatricula(int *matricula){
  *
  *  Função: GRC Consulta Email
  *  ****/
-GRC_tpCondRet GRC_consultaEmail(char *email){
-	PRF_ptProfessor prof = NULL;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	PRF_consultaEmail(prof, email);
+GRC_tpCondRet GRC_consultaBibliografia(char *bibliografia){
 	return GRC_CondRetOk;
 }/* Fim função: GRC Consulta Email*/
+
 
  /***************************************************************************
  *
  *  Função: GRC Consulta Telefone
  *  ****/
-GRC_tpCondRet GRC_consultaTelefone(int *tel){
-	PRF_ptProfessor prof = NULL;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	PRF_consultaTelefone(prof, tel);
+GRC_tpCondRet GRC_consultaEmenta(char *ementa){
 	return GRC_CondRetOk;
 }/* Fim função: GRC Consulta Telefone*/
 
- /***************************************************************************
- *
- *  Função: GRC Consulta Data de Nascimento
- *  ****/
-GRC_tpCondRet GRC_consultaDataNascimento(int *dia, int *mes, int *ano){
-	PRF_ptProfessor prof = NULL;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	PRF_consultaDiaNascimento(prof, dia);
-	PRF_consultaMesNascimento(prof, mes);
-	PRF_consultaAnoNascimento(prof, ano);
-	return GRC_CondRetOk;
-}/* Fim função: GRC Consulta Data de Nascimento*/
-
- /***************************************************************************
- *
- *  Função: GRC Consulta Endereço
- *  ****/
-GRC_tpCondRet GRC_consultaEndereco(char *pais, char *uf, char *cidade, char *bairro, char *rua, int *numero, char *complemento){
-	PRF_ptProfessor prof = NULL;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	PRF_consultaPais(prof,pais);
-	PRF_consultaUf(prof,uf);
-	PRF_consultaCidade(prof,cidade);
-	PRF_consultaBairro(prof,bairro);
-	PRF_consultaRua(prof,rua);
-	PRF_consultaNumero(prof,numero);
-	PRF_consultaComplemento(prof,complemento);
-	return GRC_CondRetOk;
-}/* Fim função: GRC Consulta Endereço*/
-
- /***************************************************************************
- *
- *  Função: GRC Altera Nome
- *  ****/
-GRC_tpCondRet GRC_alteraNome(char *nome){
-	PRF_ptProfessor prof = NULL;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	if(PRF_alteraNome(prof, nome)==PRF_CondRetFormatoInvalido) return GRC_CondRetFormatoInvalido;
-	return GRC_CondRetOk;
-}/* Fim função: GRC Altera Nome*/
-
- /***************************************************************************
- *
- *  Função: GRC Altera RG
- *  ****/
-GRC_tpCondRet GRC_alteraRg(int rg){
-	PRF_ptProfessor prof = NULL;
-	int id;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	PRF_consultaMatricula(prof, &id);
-	if(GRC_buscaPorRg(rg) == GRC_CondRetOk) return GRC_CondRetIdJaCriado;
-	/* Retornando cursor para posicao original */
-	GRC_buscaPorMatricula(id);
-	if(PRF_alteraRg(prof,rg)==PRF_CondRetFormatoInvalido) return GRC_CondRetFormatoInvalido;
-	return GRC_CondRetOk;
-}/* Fim função: GRC Altera RG*/
-
- /***************************************************************************
- *
- *  Função: GRC Altera CPF
- *  ****/
-GRC_tpCondRet GRC_alteraCpf(char *cpf){
-	PRF_ptProfessor prof = NULL;
-	int id;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	PRF_consultaMatricula(prof, &id);
-	if(GRC_buscaPorCpf(cpf) == GRC_CondRetOk) return GRC_CondRetIdJaCriado;
-	/* Retornando cursor para posicao original */
-	GRC_buscaPorMatricula(id);
-	if(PRF_alteraCpf(prof, cpf)==PRF_CondRetFormatoInvalido) return GRC_CondRetFormatoInvalido;
-	return GRC_CondRetOk;
-}/* Fim função: GRC Altera CPF*/
-
- /***************************************************************************
- *
- *  Função: GRC Altera Matricula
- *  ****/
-GRC_tpCondRet GRC_alteraMatricula(int matricula){
-	PRF_ptProfessor prof = NULL;
-	int id;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	PRF_consultaMatricula(prof, &id);
-	if(GRC_buscaPorMatricula(matricula) == GRC_CondRetOk) return GRC_CondRetIdJaCriado;
-	/* Retornando cursor para posicao original */
-	GRC_buscaPorMatricula(id);
-	if(PRF_alteraMatricula(prof, matricula)==PRF_CondRetFormatoInvalido) return GRC_CondRetFormatoInvalido;
-	return GRC_CondRetOk;
-}/* Fim função: GRC Altera Matricula*/
-
- /***************************************************************************
- *
- *  Função: GRC Altera Email
- *  ****/
-GRC_tpCondRet GRC_alteraEmail(char* email){
-	PRF_ptProfessor prof = NULL;
-	int id;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	PRF_consultaMatricula(prof, &id);
-	if(GRC_buscaPorEmail(email) == GRC_CondRetOk) return GRC_CondRetIdJaCriado;
-	/* Retornando cursor para posicao original */
-	GRC_buscaPorMatricula(id);
-	if(PRF_alteraEmail(prof, email)==PRF_CondRetFormatoInvalido) return GRC_CondRetFormatoInvalido;
-	return GRC_CondRetOk;
-}/* Fim função: GRC Altera Email*/
-
- /***************************************************************************
- *
- *  Função: GRC Altera Telefone
- *  ****/
-GRC_tpCondRet GRC_alteraTelefone(int tel){
-	PRF_ptProfessor prof = NULL;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	if(PRF_alteraTelefone(prof, tel)==PRF_CondRetFormatoInvalido) return GRC_CondRetFormatoInvalido;
-	return GRC_CondRetOk;
-}/* Fim função: GRC Altera Telefone*/
-
- /***************************************************************************
- *
- *  Função: GRC Altera Data de Nascimento
- *  ****/
-GRC_tpCondRet GRC_alteraDataNascimento(int dia, int mes, int ano){
-	PRF_ptProfessor prof = NULL;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	if(PRF_alteraDataNascimento(prof, dia, mes, ano)==PRF_CondRetFormatoInvalido) return GRC_CondRetFormatoInvalido;
-	return GRC_CondRetOk;
-}/* Fim função: GRC Altera Data de Nascimento*/
-
- /***************************************************************************
- *
- *  Função: GRC Altera Endereco
- *  ****/
-GRC_tpCondRet GRC_alteraEndereco(char *pais, char *uf, char *cidade, char *bairro, char *rua, int numero, char *complemento){
-	PRF_ptProfessor prof = NULL;
-	if(get_val_cursor(grc->parDisciplinas, (void**) &prof) == LIS_CondRetListaVazia)
-			return GRC_CondRetCorpoDocenteVazio;
-	if(PRF_alteraPais(prof,pais)==PRF_CondRetFormatoInvalido) return GRC_CondRetFormatoInvalido;
-	if(PRF_alteraUf(prof,uf)==PRF_CondRetFormatoInvalido) return GRC_CondRetFormatoInvalido;
-	if(PRF_alteraCidade(prof,cidade)==PRF_CondRetFormatoInvalido) return GRC_CondRetFormatoInvalido;
-	if(PRF_alteraBairro(prof,bairro)==PRF_CondRetFormatoInvalido) return GRC_CondRetFormatoInvalido;
-	if(PRF_alteraRua(prof,rua)==PRF_CondRetFormatoInvalido) return GRC_CondRetFormatoInvalido;
-	if(PRF_alteraNumero(prof,numero)==PRF_CondRetFormatoInvalido) return GRC_CondRetFormatoInvalido;
-	if(PRF_alteraComplemento(prof,complemento)==PRF_CondRetFormatoInvalido) return GRC_CondRetFormatoInvalido;
-	return GRC_CondRetOk;
-}/* Fim função: GRC Altera Endereco*/
