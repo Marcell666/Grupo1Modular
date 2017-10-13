@@ -47,29 +47,40 @@
 
 #define MEN_TAM_STRING 80
 
-
 /***********************************************************************
 *
-*  $FC Função: MEN_loginAluno
+*  $FC Função: MEN_loginAdministrativo
 *
 *  $ED Descrição da função
-*		Realiza a busca da matricula do aluno. (não implementado)
+*		Mostra o menu inicial.
 *
 ***********************************************************************/
-/*Assertivas: Retorno da função: Rertona 1, se foi encontrado a matricula.
+/*Assertivas: Retorno da função: Retona 1, se os dados são validos.
 /			 Parâmentros: Estruturas de ponteiros.
 ***********************************************************************/
-int MEN_loginAluno()
+
+int MEN_loginAdministrativo()
 {
-	int mat;
+	char user[81];
+	char senha[81];
+	printf("\nLogin Administrador\n");
 
-	printf("\nLogin Aluno\n");
+	printf("\t\t Dica: use \"admin\", \"admin\".\n");// TODO retirar isto
 
-	printf("\nDigite a matricula: ");
-	scanf("%d", &mat);
+	printf("\nDigite a user: ");
+	scanf(" %s", user);
+
+	printf("\nDigite a senha: ");
+	scanf(" %s", senha);
 	
+	if(strcmp("admin", user) == 0 && strcmp("admin", senha) == 0 )
+	{
+		system("cls");
+		return 1;
+	}
+
 	system("cls");
-	return 1;
+	return 0;
 }
 
 /***********************************************************************
@@ -100,6 +111,29 @@ int MEN_loginProfessor()
 	return 0;
 }
 
+/***********************************************************************
+*
+*  $FC Função: MEN_loginAluno
+*
+*  $ED Descrição da função
+*		Realiza a busca da matricula do aluno. (não implementado)
+*
+***********************************************************************/
+/*Assertivas: Retorno da função: Rertona 1, se foi encontrado a matricula.
+/			 Parâmentros: Estruturas de ponteiros.
+***********************************************************************/
+int MEN_loginAluno()
+{
+	int mat;
+
+	printf("\nLogin Aluno\n");
+
+	printf("\nDigite a matricula: ");
+	scanf("%d", &mat);
+	
+	system("cls");
+	return 1;
+}
 
 /***********************************************************************
 *
@@ -392,12 +426,9 @@ void MEN_modificaProfessor()
 	}while(opcao);
 }
 
-
-
-
 void MEN_menuGradeCurricular()
 {
-	char nomeFunc[][20] ={"sair", "adicionar disciplina" , "mostrar a disciplina atual", "buscar outra disciplina", "mostrar todas as disciplinas", "inserir um Pre-Requisito", "remover todos os Pre-Requisitos", "Limpar a grade Curricular"};
+	char nomeFunc[][40] ={"sair", "adicionar disciplina" , "mostrar a disciplina atual", "buscar outra disciplina", "mostrar todas as disciplinas", "inserir um Pre-Requisito", "remover todos os Pre-Requisitos", "Limpar a grade Curricular"};
 	int nItens = 8, i;
 	int creditos;
 	char nome[MEN_TAM_STRING], codigo[MEN_TAM_STRING], bibliografia[MEN_TAM_STRING], ementa[MEN_TAM_STRING];
@@ -418,7 +449,7 @@ void MEN_menuGradeCurricular()
 				printf("\nDigite o codigo:\n");
 				scanf(" %s", codigo);
 				printf("\nDigite o numero de creditos:\n");
-				scanf(" %s", creditos);
+				scanf(" %d", &creditos);
 				printf("\nDigite a bibliografia:\n");
 				scanf(" %s", bibliografia);
 				printf("\nDigite a ementa:\n");
@@ -435,7 +466,7 @@ void MEN_menuGradeCurricular()
 				GRC_mostraAtual();
 				break;
 			case 4:
-				GRC_mostrarTodas();
+				GRC_mostraTodas();
 				break;
 			case 5:
 				printf("Digite o código da disciplina que deseja configurar como pre-requisito:\n");
@@ -468,45 +499,3 @@ void MEN_menuGradeCurricular()
 		GRC_mostraAtual();
 	}while(opcao);
 }
-
-
-
-
-
-
-/***********************************************************************
-*
-*  $FC Função: MEN_loginAdministrativo
-*
-*  $ED Descrição da função
-*		Mostra o menu inicial.
-*
-***********************************************************************/
-/*Assertivas: Retorno da função: Retona 1, se os dados são validos.
-/			 Parâmentros: Estruturas de ponteiros.
-***********************************************************************/
-
-int MEN_loginAdministrativo()
-{
-	char user[81];
-	char senha[81];
-	printf("\nLogin Administrador\n");
-
-	printf("\t\t Dica: use \"admin\", \"admin\".\n");// TODO retirar isto
-
-	printf("\nDigite a user: ");
-	scanf(" %s", user);
-
-	printf("\nDigite a senha: ");
-	scanf(" %s", senha);
-	
-	if(strcmp("admin", user) == 0 && strcmp("admin", senha) == 0 )
-	{
-		system("cls");
-		return 1;
-	}
-
-	system("cls");
-	return 0;
-}
-

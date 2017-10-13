@@ -137,7 +137,7 @@ CDO_tpCondRet CDO_mostraAtual(){
 
  /***************************************************************************
  *
- *  Função: CDO Mosta Todos Professores
+ *  Função: CDO Mostra Todos Professores
  *  ****/
 
 CDO_tpCondRet CDO_mostraTodos(){
@@ -148,7 +148,7 @@ CDO_tpCondRet CDO_mostraTodos(){
 		PRF_mostra(prof);
 	}while(next(doc->professores)==LIS_CondRetOK);
 	return CDO_CondRetOk;
-}/* Fim função: CDO Mosta Todos Professores */
+}/* Fim função: CDO Mostra Todos Professores */
 
  /***************************************************************************
  *
@@ -156,8 +156,8 @@ CDO_tpCondRet CDO_mostraTodos(){
  *  ****/
 
 CDO_tpCondRet CDO_limpa(){
-	Professor *prof = NULL;
-	while(pop_back(doc->professores, (void**) &prof)==LIS_CondRetOK){
+	PRF_ptProfessor prof = NULL;
+	while(pop_back(doc->professores, (void**) &prof)==LIS_CondRetOK)
 		PRF_libera(&prof);
 	return CDO_CondRetOk;
 }/* Fim função: CDO Limpa Lista */
@@ -168,8 +168,8 @@ CDO_tpCondRet CDO_limpa(){
  *  ****/
 
 CDO_tpCondRet CDO_retira(){
-	Professor *prof = NULL;
-	if(pop_cursor(doc->professores, &prof) == LIS_CondRetListaVazia) return CDO_CondRetCorpoDocenteVazio;
+	PRF_ptProfessor prof = NULL;
+	if(pop_cursor(doc->professores, (void**) &prof) == LIS_CondRetListaVazia) return CDO_CondRetCorpoDocenteVazio;
 	PRF_libera(&prof);
 	return CDO_CondRetOk;
 }/* Fim função: CDO Retira da Lista */
@@ -488,12 +488,14 @@ CDO_tpCondRet CDO_alteraEndereco(char *pais, char *uf, char *cidade, char *bairr
 	PRF_ptProfessor prof = NULL;
 	if(get_val_cursor(doc->professores, (void**) &prof) == LIS_CondRetListaVazia)
 			return CDO_CondRetCorpoDocenteVazio;
-	if(PRF_alteraPais(prof,pais)==PRF_CondRetFormatoInvalido) return CDO_CondRetFormatoInvalido;
-	if(PRF_alteraUf(prof,uf)==PRF_CondRetFormatoInvalido) return CDO_CondRetFormatoInvalido;
-	if(PRF_alteraCidade(prof,cidade)==PRF_CondRetFormatoInvalido) return CDO_CondRetFormatoInvalido;
-	if(PRF_alteraBairro(prof,bairro)==PRF_CondRetFormatoInvalido) return CDO_CondRetFormatoInvalido;
-	if(PRF_alteraRua(prof,rua)==PRF_CondRetFormatoInvalido) return CDO_CondRetFormatoInvalido;
-	if(PRF_alteraNumero(prof,numero)==PRF_CondRetFormatoInvalido) return CDO_CondRetFormatoInvalido;
-	if(PRF_alteraComplemento(prof,complemento)==PRF_CondRetFormatoInvalido) return CDO_CondRetFormatoInvalido;
+	if(PRF_alteraPais(prof,pais)		==	PRF_CondRetFormatoInvalido) return CDO_CondRetFormatoInvalido;
+	if(PRF_alteraUf(prof,uf)		==	PRF_CondRetFormatoInvalido) return CDO_CondRetFormatoInvalido;
+	if(PRF_alteraCidade(prof,cidade)	==	PRF_CondRetFormatoInvalido) return CDO_CondRetFormatoInvalido;
+	if(PRF_alteraBairro(prof,bairro)	==	PRF_CondRetFormatoInvalido) return CDO_CondRetFormatoInvalido;
+	if(PRF_alteraRua(prof,rua)		==	PRF_CondRetFormatoInvalido) return CDO_CondRetFormatoInvalido;
+	if(PRF_alteraNumero(prof,numero)	==	PRF_CondRetFormatoInvalido) return CDO_CondRetFormatoInvalido;
+	if(PRF_alteraComplemento(prof,complemento)==	PRF_CondRetFormatoInvalido) return CDO_CondRetFormatoInvalido;
 	return CDO_CondRetOk;
 }/* Fim função: CDO Altera Endereco*/
+
+

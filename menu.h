@@ -34,18 +34,44 @@
 
 /***********************************************************************
 *
-*  $FC Função: MEN_menuAluno.
+*  $FC Função: MEN_loginAdministrativo
 *
 *  $ED Descrição da função
-*		Mostra o menu para o aluno.
+*		Mostra o menu inicial.
 *
 ***********************************************************************/
-/*Assertivas: Retorno da função: não há retorno.
+/*Assertivas: Retorno da função: Rertona 1, se os dados são validos.
+/			 Parâmentros: Estruturas de ponteiros.
+***********************************************************************/
+int MEN_loginAdministrativo();
+
+/***********************************************************************
+*
+*  $FC Função: MEN_loginProfessor.
+*
+*  $ED Descrição da função
+*		Realiza a busca no corpo docente, se a matricula.
+*
+***********************************************************************/
+/*Assertivas: Retorno da função: Retorna 1, caso econtre e 0, senao.
 /			 Parâmentros: Estruturas de ponteiros.
 ***********************************************************************/
 
-void MEN_menuInicial();
+int MEN_loginProfessor();
+/***********************************************************************
+*
+*  $FC Função: MEN_loginAluno
+*
+*  $ED Descrição da função
+*		Realiza a busca da matricula do aluno. (não implementado)
+*
+***********************************************************************/
+/*Assertivas: Retorno da função: Rertona 1, se foi encontrado a matricula.
+/			 Parâmentros: Estruturas de ponteiros.
+***********************************************************************/
 
+
+int MEN_loginAluno();
 
 /***********************************************************************
 *
@@ -68,35 +94,6 @@ void MEN_adicionaAluno();
 ***********************************************************************/
 
 void MEN_modificaAluno();
-
-/***********************************************************************
-*
-*  $FC Função: MEN_loginAluno
-*
-*  $ED Descrição da função
-*		Realiza a busca da matricula do aluno. (não implementado)
-*
-***********************************************************************/
-/*Assertivas: Retorno da função: Rertona 1, se foi encontrado a matricula.
-/			 Parâmentros: Estruturas de ponteiros.
-***********************************************************************/
-
-
-int MEN_loginAluno();
-
-/***********************************************************************
-*
-*  $FC Função: MEN_loginProfessor.
-*
-*  $ED Descrição da função
-*		Realiza a busca no corpo docente, se a matricula.
-*
-***********************************************************************/
-/*Assertivas: Retorno da função: Retorna 1, caso econtre e 0, senao.
-/			 Parâmentros: Estruturas de ponteiros.
-***********************************************************************/
-
-int MEN_loginProfessor();
 
 /***********************************************************************
 *
@@ -125,15 +122,7 @@ void MEN_adicionaProfessor();
 ***********************************************************************/
 
 void MEN_modificaProfessor();
-/***********************************************************************
-*
-*  $FC Função: MEN_loginAdministrativo
-*
-*  $ED Descrição da função
-*		Mostra o menu inicial.
-*
-***********************************************************************/
-/*Assertivas: Retorno da função: Rertona 1, se os dados são validos.
-/			 Parâmentros: Estruturas de ponteiros.
-***********************************************************************/
-int MEN_loginAdministrativo();
+
+
+void MEN_menuGradeCurricular();
+

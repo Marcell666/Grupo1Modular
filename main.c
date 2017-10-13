@@ -1,6 +1,6 @@
 /***************************************************************************
 *
-*  $MCD M√≥dulo de defini√ß√£o: M√≥dulo Menu
+*  $MCD MÛdulo de definiÁ„o: MÛdulo Menu
 *
 *  Arquivo gerado:              menu.c
 *  Letras identificadoras:      MEN
@@ -8,28 +8,28 @@
 *  Nome da base de software:
 *  Arquivo da base de software:
 *
-*  Projeto: Sistema Acad√™mico da turma 3WB
+*  Projeto: Sistema AcadÍmico da turma 3WB
 *  Gestor:  Grupo 2/ Grupo 1
 *  Autores:   Bruce Marcellino
 *	      Bruno Miranda Marinho
-*             Fl√°vio Thiago Franco Vaz
-*             Jo√£o Victor Cerqueira
+*             Fl·vio Thiago Franco Vaz
+*             Jo„o Victor Cerqueira
 *             Matheus Henrique Branco Zeitune
-*             Vin√≠cius Cortat
+*             VinÌcius Cortat
 *
-*  $HA Hist√≥rico de evolu√ß√£o:
-*     Vers√£o  Autor    Data			Observa√ß√µes
-*     1.01    Bruce	07/10/2017	Reestrutura√ß√£o
-*     1.00    Bruce	06/10/2017	Revis√£o/finaliza√ß√£o
+*  $HA HistÛrico de evoluÁ„o:
+*     Vers„o  Autor    Data			ObservaÁıes
+*     1.01    Bruce	07/10/2017	ReestruturaÁ„o
+*     1.00    Bruce	06/10/2017	Revis„o/finalizaÁ„o
 *     0.05    Bruce	05/10/2017	Modulo professor
-*     0.04    Matheus   04/10/2017  	Revis√£o menu
+*     0.04    Matheus   04/10/2017  	Revis„o menu
 *     0.03    Bruno	02/10/2017	Menu professor
-*     0.02    Fl√°vio	02/10/2017  	Revis√£o
-*     0.01    Matheus	01/10/2017	In√≠cio do desenvolvimento
+*     0.02    Fl·vio	02/10/2017  	Revis„o
+*     0.01    Matheus	01/10/2017	InÌcio do desenvolvimento
 *
-*  $ED Descri√ß√£o do m√≥dulo
-*     Este m√≥dulo implementa o Menu do Sistema Acad√™mico a ser desenvolvido.
-*     O Principal √© a chamada dos modulos.
+*  $ED DescriÁ„o do mÛdulo
+*     Este mÛdulo implementa o Menu do Sistema AcadÍmico a ser desenvolvido.
+*     O Principal È a chamada dos modulos.
 ***************************************************************************/
 
 #include <stdio.h>
@@ -47,14 +47,14 @@
 
 /***********************************************************************
 *
-*  $FC Fun√ß√£o: MEN_menuAluno.
+*  $FC FunÁ„o: MEN_menuAluno.
 *
-*  $ED Descri√ß√£o da fun√ß√£o
+*  $ED DescriÁ„o da funÁ„o
 *		Mostra o menu para o aluno.
 *
 ***********************************************************************/
-/*Assertivas: Retorno da fun√ß√£o: n√£o h√° retorno.
-/			 Par√¢mentros: Estruturas de ponteiros.
+/*Assertivas: Retorno da funÁ„o: n„o h· retorno.
+/			 Par‚mentros: Estruturas de ponteiros.
 ***********************************************************************/
 
 void menuAluno()
@@ -79,7 +79,7 @@ void menuAluno()
 		{
 			case 1:
 				system("cls");
-				GRC_mostraTodos();
+				GRC_mostraTodas();
 				break;
 			case 2:
 				system("cls");
@@ -98,14 +98,14 @@ void menuAluno()
 
 /***********************************************************************
 *
-*  $FC Fun√ß√£o: MEN_menuProfessor
+*  $FC FunÁ„o: MEN_menuProfessor
 *
-*  $ED Descri√ß√£o da fun√ß√£o
+*  $ED DescriÁ„o da funÁ„o
 *		Mostra o menu Professor.
 *
 ***********************************************************************/
-/*Assertivas: Retorno da fun√ß√£o: n√£o h√° retorno.
-/			 Par√¢mentros: Estruturas de ponteiros.
+/*Assertivas: Retorno da funÁ„o: n„o h· retorno.
+/			 Par‚mentros: Estruturas de ponteiros.
 ***********************************************************************/
 
 void menuProfessor()
@@ -160,14 +160,14 @@ void menuProfessor()
 
 /***********************************************************************
 *
-*  $FC Fun√ß√£o: MEN_menuPAdministrativo
+*  $FC FunÁ„o: MEN_menuPAdministrativo
 *
-*  $ED Descri√ß√£o da fun√ß√£o
+*  $ED DescriÁ„o da funÁ„o
 *		Mostra o menu Administrativo.
 *
 ***********************************************************************/
-/*Assertivas: Retorno da fun√ß√£o: n√£o h√° retorno.
-/			 Par√¢mentros: Estruturas de ponteiros.
+/*Assertivas: Retorno da funÁ„o: n„o h· retorno.
+/			 Par‚mentros: Estruturas de ponteiros.
 ***********************************************************************/
 
 void menuPAdministrativo()
@@ -315,3 +315,4 @@ int main(void){
 	}while(opcao);
 	return 0;
 }
+

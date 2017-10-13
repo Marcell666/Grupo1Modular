@@ -204,21 +204,32 @@ GRC_tpCondRet GRC_libera(){
 
 GRC_tpCondRet GRC_buscaPorCodigo(char *chave){
 	ParDisciplina *parD = NULL;
-	char *codigo = NULL;
+	char *codigo = NULL;	
+	char *inicioCod = NULL;
 	int ret;
+	
+	get_val_cursor(grc->parDisciplinas, (void**) &parD);
+	if(get_val_cursor(grc->parDisciplinas, (void**) &parD) == LIS_CondRetListaVazia)
+		return GRC_CondRetGradeCurricularVazia;
+	DIS_get_codigo(parD->disciplina, &inicioCod);
 
 	first(grc->parDisciplinas);
 	do{
-		if(get_val_cursor(grc->parDisciplinas, (void**) &parD) == LIS_CondRetListaVazia)
+		if(get_val_cursor(grc->parDisciplinas, (void**) &parD) == LIS_CondRetListaVazia){
+			free(inicioCod);
 			return GRC_CondRetGradeCurricularVazia;
+		}
 
 		DIS_get_codigo(parD->disciplina, &codigo);
 		ret = strcmp(chave, codigo);
 		free(codigo);
-		if(ret==0)
+		if(ret==0){
+			free(inicioCod);
 			return GRC_CondRetOk;
+		}
 	}while(next(grc->parDisciplinas)==LIS_CondRetOK);
-
+	GRC_buscaPorCodigo(inicioCod);
+	free(inicioCod);
 	return GRC_CondRetDisciplinaNaoEncontrada;
 }/* Fim função: GRC Busca Por RG */
 
